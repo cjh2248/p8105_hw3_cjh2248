@@ -1,7 +1,0 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-# complete data files in /data-raw/
-/data-raw/*.zip
-/data-raw/*.gz
