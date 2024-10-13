@@ -8,9 +8,9 @@ date: "2024-10-09"
 library(tidyverse)
 library(dplyr)
 library(rnoaa)
-library(ggridges)
 library(dplyr)
 library(ggplot2)
+library(readr)
 ```
 
 ```{r}
@@ -21,7 +21,7 @@ data("ny_noaa")
 ## Problem 1 
 
 ```{r}
-ny_noaa = 
+ny_noaa_updated = 
   (ny_noaa %>%
 mutate(
     date = as.Date(date),
@@ -37,8 +37,7 @@ mutate(
 In the ny_noaa dataset, we observe weather patterns (precipation, snowfall, snow depth) from numerous stations in New York. The variables identified are: (station) id, date, tmax (max temp in F), tmin (min temp in F), prcp (precipation), and snow (fall). The most commonly observed snowfall values are 0 or NA indicating that there is a large majority of stations that do not have snowfall. 
 
 ```{r}
-```{r}
-snowfall_values <- ny_noaa %>%
+snowfall_values <- ny_noaa_updated %>%
   group_by(snow) %>%
   summarise(count = n()) %>%
   arrange(desc(count))
@@ -46,6 +45,29 @@ snowfall_values <- ny_noaa %>%
 print(snowfall_values)
 ```
 
+```{r}
+temp_station = ny_noaa_updated %>%
+  mutate(month = case_when(
+    id == "January" ~ "January",
+    id == "July" ~ "July",
+    TRUE ~ NA_character_  
+  )) %>%
+
+print(temp_station)
+```
 
 ## Problem 2 
+
+```{r}
+covar_df = read_csv("./data/nhanes_covar.csv") 
+
+accel_df = read_csv("./data/nhanes_accel.csv")
+
+colnames(covar_df)
+```
+
+```{r}
+covar_df_updated = covar_df %% 
+  filter(age >= 21, !is.na(education), !is.na(sex))
+```
 
