@@ -71,3 +71,13 @@ covar_df_updated = covar_df %%
   filter(age >= 21, !is.na(education), !is.na(sex))
 ```
 
+## Problem 3 
+
+```{r}
+jan_2020_citibike = 
+  read_csv("citibike/Jan 2020 Citi.csv", show_col_types = FALSE) %%
+  janitor::clean_names() %% 
+  rename(ride_id = id, start_station_name = start, end_station = end, rideable_type = type)
+```
+
+
