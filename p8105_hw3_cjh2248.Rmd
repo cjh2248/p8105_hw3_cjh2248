@@ -11,6 +11,7 @@ library(rnoaa)
 library(dplyr)
 library(ggplot2)
 library(readr)
+library(janitor)
 ```
 
 ```{r}
@@ -59,16 +60,38 @@ print(temp_station)
 ## Problem 2 
 
 ```{r}
-covar_df = read_csv("./data/nhanes_covar.csv") 
+library(tidyverse)
+library(haven)
+library(janitor)
+library(dplyr)
 
-accel_df = read_csv("./data/nhanes_accel.csv")
+covar_df <- read.csv("./data/nhanes_covar.csv")
+accel_df <- read.csv("./data/nhanes_accel.csv")
 
-colnames(covar_df)
-```
+colnames(covar_df) <- c("SEQN", "sex", "age", "BMI", "education")
 
-```{r}
-covar_df_updated = covar_df %% 
-  filter(age >= 21, !is.na(education), !is.na(sex))
+covar_df <- covar_df |>
+  clean_names()
+
+accel_df <- accel_df |> 
+  clean_names()
+
+covar_df <- covar_df |>
+  filter(age >= 21) |>
+  drop_na()
+
+colnames(accel_df) <- c("SEQN")
+
+accel_df <- accel_df |>
+  drop_na()
+
+covar_df <- data.frame(seqn = c(1, 2, 3), value = c("A", "B", "C"))
+accel_df <- data.frame(seqn = c(1, 2, 2), accel_value = c(0.5, 0.6, 0.6), accel_value = c(0.7, 0.8, 0.9))
+
+covar_accel_df = 
+  left_join(covar_df, accel_df, by = "seqn")
+
+print(covar_accel_df)
 ```
 
 ## Problem 3 
@@ -77,7 +100,7 @@ covar_df_updated = covar_df %%
 jan_2020_citibike = 
   read_csv("citibike/Jan 2020 Citi.csv", show_col_types = FALSE) %%
   janitor::clean_names() %% 
-  rename(ride_id = id, start_station_name = start, end_station = end, rideable_type = type)
+  rename(ride_id = id, start_station_name = start, end_station = end, member_casual = member_casual, duration = duration, rideable_type = type)
 ```
 
 
