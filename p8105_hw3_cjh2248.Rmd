@@ -52,7 +52,7 @@ temp_station = ny_noaa_updated %>%
     id == "January" ~ "January",
     id == "July" ~ "July",
     TRUE ~ NA_character_  
-  )) %>%
+  )) 
 
 print(temp_station)
 ```
@@ -65,8 +65,8 @@ library(haven)
 library(janitor)
 library(dplyr)
 
-covar_df <- read.csv("./data/nhanes_covar.csv")
-accel_df <- read.csv("./data/nhanes_accel.csv")
+covar_df <- read_csv("./data/nhanes_covar.csv")
+accel_df <- read_csv("./data/nhanes_accel.csv")
 
 colnames(covar_df) <- c("SEQN", "sex", "age", "BMI", "education")
 
@@ -75,21 +75,32 @@ covar_df <- covar_df |>
 
 accel_df <- accel_df |> 
   clean_names()
+```
 
+```{r}
 covar_df <- covar_df |>
   filter(age >= 21) |>
-  drop_na()
-
-colnames(accel_df) <- c("SEQN")
+  drop_na() |>
+  mutate(
+    sex = 
+      case_match(
+        sex, 
+        1 ~ "male", 
+        2 ~ "female"),
+    sex = as.factor(sex),
+    education= 
+      case_match(
+        education, 
+        1 ~ "Less than high school", 
+        2 ~ "High School",
+        3 ~ "More than high school"), 
+    education = as.factor(education))
 
 accel_df <- accel_df |>
   drop_na()
 
-covar_df <- data.frame(seqn = c(1, 2, 3), value = c("A", "B", "C"))
-accel_df <- data.frame(seqn = c(1, 2, 2), accel_value = c(0.5, 0.6, 0.6), accel_value = c(0.7, 0.8, 0.9))
-
 covar_accel_df = 
-  left_join(covar_df, accel_df, by = "seqn")
+  left_join(covar_df, accel_df, by = "SEQN")
 
 print(covar_accel_df)
 ```
