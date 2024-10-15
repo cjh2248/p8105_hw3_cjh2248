@@ -99,8 +99,15 @@ covar_df <- covar_df |>
 accel_df <- accel_df |>
   drop_na()
 
+accel_df = 
+  pivot_longer(
+    accel_df, 
+    starts_with("min"),
+    names_to = "minutes", 
+    values_to = "min")
+
 covar_accel_df = 
-  left_join(covar_df, accel_df, by = "SEQN")
+  left_join(covar_df, accel_df, by = "seqn")
 
 print(covar_accel_df)
 ```
