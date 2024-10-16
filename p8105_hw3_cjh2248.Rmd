@@ -112,13 +112,34 @@ covar_accel_df =
 print(covar_accel_df)
 ```
 
+For this problem, I used the clean_names function to tidy the data and began to filter the age for the covar_df less than 21 years of age. One thing to note that I am missing in my code is the skip 4 lines function. I did not do this because I had already removed the first 4 rows when I loaded the data into the project. I spoke with someone during office hours and they strongly advised me to not do that for future assignments as I might get deducted points. Hopefully, this clarifies a bit of my work. 
+
+Additionally, I used case_match to sort through the numeric values representing sex to characters. For the accel_df, I used the pivot_longer tool to combine all the columns representing minutes. After that, I combined the two datasets together. 
+
+```{r}
+library(ggridges)
+
+ggplot(covar_accel_df, aes(x = age, fill = sex)) + 
+  geom_histogram(binwidth = 5, position = "dodge") + 
+  facet_wrap(~ education) +
+  labs(title = "Age Distribution by Education Level and Sex", 
+       x = "Age", 
+       y = "Count",
+       fill = "Sex") +
+  theme_minimal()
+```
+
+
+
+
+
 ## Problem 3 
 
 ```{r}
 jan_2020_citibike = 
-  read_csv("citibike/Jan 2020 Citi.csv", show_col_types = FALSE) %%
-  janitor::clean_names() %% 
-  rename(ride_id = id, start_station_name = start, end_station = end, member_casual = member_casual, duration = duration, rideable_type = type)
+  read_csv("citibike/Jan 2020 Citi.csv", show_col_types = FALSE) |>
+  clean_names() |>
+  drop_na() 
 ```
 
 
