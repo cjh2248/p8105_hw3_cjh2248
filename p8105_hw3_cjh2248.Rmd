@@ -104,7 +104,8 @@ accel_df =
     accel_df, 
     starts_with("min"),
     names_to = "minutes", 
-    values_to = "min")
+    values_to = "min",
+    names_prefix = "min")
 
 covar_accel_df = 
   left_join(covar_df, accel_df, by = "seqn")
@@ -115,6 +116,15 @@ print(covar_accel_df)
 For this problem, I used the clean_names function to tidy the data and began to filter the age for the covar_df less than 21 years of age. One thing to note that I am missing in my code is the skip 4 lines function. I did not do this because I had already removed the first 4 rows when I loaded the data into the project. I spoke with someone during office hours and they strongly advised me to not do that for future assignments as I might get deducted points. Hopefully, this clarifies a bit of my work. 
 
 Additionally, I used case_match to sort through the numeric values representing sex to characters. For the accel_df, I used the pivot_longer tool to combine all the columns representing minutes. After that, I combined the two datasets together. 
+
+
+```{r}
+covar_accel_df |>
+  group_by(education, sex) |>
+  summarize(count = n()) |>
+  pivot_wider(names_from = sex, values_from = count) |>
+  knitr::kable()
+```
 
 ```{r}
 library(ggridges)
@@ -156,20 +166,28 @@ This graph depicts accelerometer data by education level and sex. Total activity
 
 
 ```{r}
-min_activity_df = covar_accel_df |> 
-  pivot_longer(
-    cols = ("minutes"),
-    names_to = "minute",
-    names_prefix = "minute_",
-    values_to = "activity") 
+library(dplyr)
 
-ggplot(min_activity_df, aes(x = minute, y = activity, color = sex)) +
-  geom_smooth(method = "loess", se = FALSE) + 
-  facet_wrap(~ education, nrow = 3) +  
-  labs(title = "24-Hour Activity Time Courses by Education Level and Sex",
-       x = "Minute of Day", 
-       y = "Activity Level", 
-       color = "Sex") +
+covar_accel_activity <- covar_accel_df %>%
+  mutate(minutes = as.numeric(as.character(minutes)), 
+         hour = floor(minutes / 60), 
+         hour = ifelse(hour > 23, 23, hour)) %>% 
+  group_by(seqn, sex, education, hour) %>% 
+  summarize(total_minutes = sum(minutes, na.rm = TRUE), .groups = "drop")
+
+covar_accel_activity |>
+  group_by(education, sex, hour) |>
+  summarize(mean_total_minutes = mean(total_minutes, na.rm = TRUE), 
+            .groups = "drop") |>
+  ggplot(aes(x = hour, y = mean_total_minutes, color = sex)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  facet_wrap(~ education, nrow = 3) +
+  labs(
+    x = "Hour of Day",
+    y = "Mean Total Minutes of Activity",
+    color = "Sex"
+  ) +
   theme_minimal() 
 ```
 
@@ -196,5 +214,6 @@ july_2024_citibike =
   clean_names() |>
   drop_na() 
 ```
+
 
 
