@@ -242,6 +242,18 @@ knitr::kable(ride_summary,
              col.names = c("Date", "Casual Riders", "Citi Bike Members"),
              caption = "Total Number of Citi Bike Rides by Year and Month")
 ```
+This table reveals the breakdown between casual riders versus members within the following time periods: Jan 2024, Jan 2020, july 2020, and july 2024. To get to this, I had to extract all the csv files from the citibike folder, tidied the data, and labeled with the corresponding date. Then, I combined all of them together by bind_rows and then filtered by converting 4 hours to seconds. I then ended up with this result.   
 
+```{r}
+july_2024_starts <- citibike_df %>% 
+  filter(Date == "july 2024") %>% 
+  group_by(start_station_name) %>% 
+  summarize(ride_count = n()) %>% 
+  arrange(desc(ride_count)) %>% 
+  slice_head(n = 5)
 
+knitr::kable(july_2024_starts, 
+             col.names = c("Starting Station", "Number of Rides"),
+             caption = "Top 5 Citi Bike Starting Stations in July 2024")
+```
 
