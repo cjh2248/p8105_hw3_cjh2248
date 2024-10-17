@@ -257,3 +257,21 @@ knitr::kable(july_2024_starts,
              caption = "Top 5 Citi Bike Starting Stations in July 2024")
 ```
 
+```{r}
+median_ride_duration <- citibike_df %>% 
+  group_by(Date, weekdays) %>% 
+  summarize(median_duration = median(duration, na.rm = TRUE), .groups = "drop")
+
+ggplot(median_ride_duration, aes(x = weekdays, y = median_duration, color = Date)) +
+  geom_point() +
+  geom_line(aes(group = Date)) +
+  facet_wrap(~Date, ncol = 2) +
+  labs(title = "Median Ride Duration by Day of Week, Month, and Date",
+       x = "Day of the Week",
+       y = "Median Ride Duration (seconds)",
+       color = "Date") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+
