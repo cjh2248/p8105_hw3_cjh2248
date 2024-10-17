@@ -190,29 +190,57 @@ covar_accel_activity |>
   ) +
   theme_minimal() 
 ```
+This graph took a bit of time to make but essentially I converted the minutes to hour of day to showcase a better visualization when plotting the data. 
 
 ## Problem 3 
 
 ```{r}
+library(tidyverse)
+library(readr) 
+library(lubridate) 
+
 jan_2020_citibike = 
   read_csv("citibike/Jan 2020 Citi.csv", show_col_types = FALSE) |>
   clean_names() |>
-  drop_na() 
+  drop_na() |>
+  mutate(Date = "jan 2020")
 
 july_2020_citibike = 
   read_csv("citibike/July 2020 Citi.csv", show_col_types = FALSE) |>
   clean_names() |>
-  drop_na() 
+  drop_na() |>
+  mutate(Date = "july 2020")
 
 jan_2024_citibike = 
   read_csv("citibike/Jan 2024 Citi.csv", show_col_types = FALSE) |>
   clean_names() |>
-  drop_na() 
+  drop_na() |>
+  mutate(Date = "jan 2024")
 
 july_2024_citibike = 
   read_csv("citibike/July 2024 Citi.csv", show_col_types = FALSE) |>
   clean_names() |>
-  drop_na() 
+  drop_na() |>
+  mutate(Date = "july 2024")
+
+citibike_df <- bind_rows(
+  jan_2020_citibike, 
+  july_2020_citibike, 
+  jan_2024_citibike, 
+  july_2024_citibike)
+
+citibike_df <- citibike_df %>% 
+  filter(duration <= 4 * 60 * 60)
+
+ride_summary <- citibike_df %>% 
+  group_by(Date, member_casual) %>% 
+  summarize(total_rides = n(), .groups = "drop") %>% 
+  pivot_wider(names_from = member_casual, values_from = total_rides) %>% 
+  arrange(Date)
+
+knitr::kable(ride_summary, 
+             col.names = c("Date", "Casual Riders", "Citi Bike Members"),
+             caption = "Total Number of Citi Bike Rides by Year and Month")
 ```
 
 
