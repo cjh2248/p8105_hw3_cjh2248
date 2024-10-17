@@ -292,4 +292,6 @@ ggplot(citibike_df_2024, aes(x = month, y = duration, fill = member_casual, colo
   theme_minimal() +
   theme(legend.position = "bottom") 
 ```
+The findings of this boxplot reveal that ride duration on electric bikes in July 2024 among members was the highest. We can observe that there was a greater amount of casual riders in July as well. 
+
 
