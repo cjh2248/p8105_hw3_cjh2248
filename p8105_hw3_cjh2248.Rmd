@@ -253,8 +253,8 @@ july_2024_starts <- citibike_df %>%
   slice_head(n = 5)
 
 knitr::kable(july_2024_starts, 
-             col.names = c("Starting Station", "Number of Rides"),
-             caption = "Top 5 Citi Bike Starting Stations in July 2024")
+             col.names = c("Start Station", "Number of Rides"),
+             caption = "Top 5 Citi Bike Start Stations in July 2024")
 ```
 
 ```{r}
@@ -266,12 +266,30 @@ ggplot(median_ride_duration, aes(x = weekdays, y = median_duration, color = Date
   geom_point() +
   geom_line(aes(group = Date)) +
   facet_wrap(~Date, ncol = 2) +
-  labs(title = "Median Ride Duration by Day of Week, Month, and Date",
-       x = "Day of the Week",
+  labs(title = "Median Ride Duration by Weekday, Month, and Year",
+       x = "Weekdays",
        y = "Median Ride Duration (seconds)",
        color = "Date") +
   theme_bw() +
   theme(legend.position = "bottom")
 ```
+From my observations, we can see that in Jan 2024, the median ride duration was lower compared to the other time periods. This can be due to colder weather. We can also emphasize that July 2020 had the highest median ride duration from all of the others. 
 
+```{r}
+citibike_df_2024 <- citibike_df %>%
+  mutate(Date = mdy(Date)) %>% 
+  filter(year(Date) == 2024) %>% 
+  separate(Date, into = c("month", "year"), sep = " ", convert = TRUE) 
+
+
+ggplot(citibike_df_2024, aes(x = month, y = duration, fill = member_casual, color = rideable_type)) +
+  geom_boxplot(position = position_dodge(width = 0.8), alpha = 0.7) +
+  labs(title = "Distribution of Ride Durations in 2024",
+       x = "Month",
+       y = " Duration",
+       fill = "Membership Status",
+       color = "Bike Type") +
+  theme_minimal() +
+  theme(legend.position = "bottom") 
+```
 
